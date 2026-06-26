@@ -1,18 +1,20 @@
 <?php
 // order_history.php
+session_start();
 
-$host = 'localhost';
-$dbname = 'retro_revival';
-$username = 'root';
-$password = '';
+// Route Guard: Force user authentication to view order logs
+if (!isset($_SESSION['User_ID'])) {
+    header("Location: login.php");
+    exit;
+}
+
+$buyerID = $_SESSION['User_ID']; 
+
+// Include your global unified connection schema file
+include 'includes/db_connect.php';
 
 try {
-    // 1. Connect to the database
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-    // 2. Fetch orders for our dummy user (Buyer_ID 3)
-    $buyerID = 3; 
+    // Fetch orders dynamically for the logged-in user
     $sql = "SELECT Order_ID, Order_TotalAmount, Order_Status, Order_ShippingAddress, Created_At 
             FROM orders 
             WHERE Buyer_ID = :buyerID 
@@ -52,6 +54,12 @@ try {
             padding: 15px 20px;
             display: flex;
             justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-weight: bold;
+            font-family: serif;
+            font-size: 20px;
         }
         .container {
             max-width: 900px;
@@ -75,6 +83,19 @@ try {
             background-color: #fdf5e6;
             color: #8B4513;
         }
+        
+        /* Navigation Links Look & Feel Consistency */
+        .links a {
+            color: white;
+            text-decoration: none;
+            padding: 0 8px;
+            font-weight: bold;
+        }
+        .links a:hover {
+            color: #fdf5e6;
+            text-decoration: underline;
+        }
+
         /* Styling for the tracking feature */
         .status-badge {
             padding: 5px 10px;
@@ -82,6 +103,7 @@ try {
             font-size: 0.9em;
             font-weight: bold;
             text-transform: uppercase;
+            display: inline-block;
         }
         .status-pending { background-color: #ffe4b5; color: #d2691e; }
         .status-shipped { background-color: #add8e6; color: #00008b; }
@@ -92,7 +114,12 @@ try {
 <body>
     <header class="navbar">
         <div class="logo">Retro Revival</div>
-        <nav class="links">Home | Search | Cart | Profile</nav>
+        <nav class="links">
+            <a href="index.php">Home</a> | 
+            <a href="products.php">Search</a> | 
+            <a href="cart.php">Cart</a> | 
+            <a href="profile.php">Profile</a>
+        </nav>
     </header>
 
     <div class="container">
@@ -118,7 +145,6 @@ try {
                             <td><?= htmlspecialchars($order['Order_ShippingAddress']) ?></td>
                             <td>RM <?= htmlspecialchars(number_format($order['Order_TotalAmount'], 2)) ?></td>
                             <td>
-                                <!-- Dynamic status badge for your tracking feature -->
                                 <span class="status-badge status-<?= strtolower(htmlspecialchars($order['Order_Status'])) ?>">
                                     <?= htmlspecialchars($order['Order_Status']) ?>
                                 </span>
@@ -128,7 +154,7 @@ try {
                 </tbody>
             </table>
         <?php else: ?>
-            <p>You have not placed any orders yet.</p>
+            <p style="padding: 20px 0; color: #666;">You have not placed any orders yet.</p>
         <?php endif; ?>
     </div>
 </body>

@@ -1,27 +1,57 @@
 <?php
-// process_order.php
+session_start();
 
-// 1. Connect to A'liah's database using PDO
+// Database Connection
 $host = 'localhost';
 $dbname = 'retro_revival';
-$username = 'root'; // Default XAMPP username
-$password = '';     // Default XAMPP password is usually empty
+$username = 'root';
+$password = '';
 
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
-    // Turn on exceptions for error handling
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die("Database connection failed: " . $e->getMessage());
+}
 
-    // 2. Check if the checkout form was submitted
+if (!isset($_SESSION['User_ID'])) {
+    header("Location: login.php");
+    exit;
+}
+
+$user_id = $_SESSION['User_ID'];
+
+try {
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        
-        // Grab the data the user typed into your form
         $fullName = $_POST['fullName'];
         $address = $_POST['address'];
         $shippingOption = $_POST['shipping'];
 
-        // 3. Calculate the Final Total based on the shipping feature
-        $cartTotal = 130.00; // Hardcoded cart total from our HTML table
+        $stmtCart = $pdo->prepare("SELECT Cart_ID FROM cart WHERE User_ID = ?");
+        $stmtCart->execute([$user_id]);
+        $cart = $stmtCart->fetch(PDO::FETCH_ASSOC);
+
+        if (!$cart) {
+            header("Location: products.php");
+            exit;
+        }
+
+        $cart_id = $cart['Cart_ID'];
+
+        $stmtFetchCart = $pdo->prepare("
+            SELECT ci.CartItem_Quantity, p.Product_Price 
+            FROM cart_item ci
+            JOIN product p ON ci.Product_ID = p.Product_ID
+            WHERE ci.Cart_ID = ?
+        ");
+        $stmtFetchCart->execute([$cart_id]);
+        $cartItems = $stmtFetchCart->fetchAll(PDO::FETCH_ASSOC);
+
+        $cartTotal = 0;
+        foreach ($cartItems as $item) {
+            $cartTotal += $item['Product_Price'] * $item['CartItem_Quantity'];
+        }
+
         if ($shippingOption == 'express') {
             $shippingCost = 15.00;
         } else {
@@ -29,34 +59,28 @@ try {
         }
         $finalTotal = $cartTotal + $shippingCost;
 
-        // In the final integrated system, Imran's code will pass the logged-in User ID.
-        // For now, we will use '3', which is the dummy Buyer ID A'liah created (Sarah Qistina).
-        $buyerID = 3; 
-
-        // 4. Insert the order into A'liah's 'orders' table
-        // We use placeholders (:buyerID) for security against SQL injection
         $sql = "INSERT INTO orders (Buyer_ID, Order_TotalAmount, Order_Status, Order_ShippingAddress) 
                 VALUES (:buyerID, :totalAmount, 'pending', :shippingAddress)";
         
         $statement = $pdo->prepare($sql);
-        $statement->bindValue(':buyerID', $buyerID);
+        $statement->bindValue(':buyerID', $user_id);
         $statement->bindValue(':totalAmount', $finalTotal);
         $statement->bindValue(':shippingAddress', $address);
-        
         $statement->execute();
         
-        // 5. Show a native CSS success page (No Bootstrap!)
-        echo "<div style='font-family: sans-serif; max-width: 600px; margin: 50px auto; padding: 30px; border: 1px solid #ccc; background-color: #fdf5e6; text-align: center;'>";
-        echo "<h1 style='color: #2e8b57; font-family: serif;'>Order Placed Successfully!</h1>";
-        echo "<p>Thank you, <strong>" . htmlspecialchars($fullName) . "</strong>. Your order has been recorded in the database.</p>";
-        echo "<p>Total Paid: <strong>RM " . number_format($finalTotal, 2) . "</strong></p>";
-        echo "<p>Shipping to: <em>" . htmlspecialchars($address) . "</em></p>";
-        echo "<br><a href='checkout.php' style='background-color: #8B4513; color: white; padding: 10px 20px; text-decoration: none;'>Go Back</a>";
+        $stmtClearCart = $pdo->prepare("DELETE FROM cart_item WHERE Cart_ID = ?");
+        $stmtClearCart->execute([$cart_id]);
+
+        // Wrap layout in unified styling matching header/footer specs
+        echo "<div style='font-family: Arial, sans-serif; max-width: 600px; margin: 80px auto; padding: 40px; border: 1px solid #e0d0b0; background-color: #fff; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border-radius: 6px;'>";
+        echo "<h1 style='color: #2e8b57; font-family: Georgia, serif; margin-bottom: 20px;'>Order Placed Successfully!</h1>";
+        echo "<p style='font-size: 16px; color: #2c1a04; margin-bottom: 10px;'>Thank you, <strong>" . htmlspecialchars($fullName) . "</strong>. Your order has been recorded in our database.</p>";
+        echo "<p style='font-size: 20px; color: #8B4513; margin: 20px 0; font-weight: bold;'>Total Amount: RM " . number_format($finalTotal, 2) . "</p>";
+        echo "<p style='color: #666; font-size: 14px; margin-bottom: 30px;'>Shipping To: <em>" . htmlspecialchars($address) . "</em></p>";
+        echo "<a href='index.php' style='background-color: #8B4513; color: white; padding: 12px 25px; text-decoration: none; font-weight: bold; border-radius: 4px; display: inline-block; transition: background 0.3s;'>Back to Homepage</a>";
         echo "</div>";
     }
-
 } catch(PDOException $e) {
-    // If something goes wrong, it will print the error so we can fix it
     echo "Database Error: " . $e->getMessage();
 }
 ?>

@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-// 1. Database Connection Configuration
+// Database Connection
 $host = 'localhost';
 $dbname = 'retro_revival';
 $username = 'root';
@@ -14,10 +14,10 @@ try {
     die("Database connection failed: " . $e->getMessage());
 }
 
-// 2. Safely grab the product ID passed from the URL string
+// Safely grab the product ID passed from the URL string
 $product_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
-// 3. Query to fetch the item details and its seller info from Aliyah's tables
+// Query to fetch the item details and its seller info from Aliyah's tables
 $query = "SELECT p.*, pi.ProductImage_Path, u.User_Name AS Seller_Name
           FROM product p 
           LEFT JOIN product_image pi ON p.Product_ID = pi.Product_ID 
@@ -63,7 +63,6 @@ if (!$item) {
             line-height: 1.6;
         }
 
-        /* --- Sticky Navigation Bar --- */
         header {
             background-color: #fff;
             border-bottom: 2px solid var(--primary-color);
@@ -83,21 +82,49 @@ if (!$item) {
             font-family: var(--serif-font);
             color: var(--primary-color);
             font-size: 24px;
+            letter-spacing: 1px;
+        }
+
+        .search-bar form {
+            display: flex;
+        }
+
+        .search-bar input {
+            padding: 8px 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px 0 0 4px;
+            width: 250px;
+            font-size: 14px;
+        }
+
+        .search-bar button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
         }
 
         .nav-links {
             display: flex;
             list-style: none;
             gap: 20px;
+            align-items: center;
         }
 
         .nav-links a {
             text-decoration: none;
             color: var(--text-dark);
             font-weight: bold;
+            font-size: 14px;
+            transition: color 0.3s;
         }
 
-        /* --- Split Detail Layout Area --- */
+        .nav-links a:hover {
+            color: var(--accent-color);
+        }
+
         .detail-container {
             display: flex;
             max-width: 1000px;
@@ -109,7 +136,6 @@ if (!$item) {
             gap: 40px;
         }
 
-        /* Left Side: Large Image Pane Placeholder */
         .detail-image-panel {
             flex: 1;
             display: flex;
@@ -128,7 +154,6 @@ if (!$item) {
             object-fit: cover;
         }
 
-        /* Right Side: Info Panel */
         .detail-info-panel {
             flex: 1;
             display: flex;
@@ -158,7 +183,6 @@ if (!$item) {
             padding-bottom: 15px;
         }
 
-        /* Info Item Specifications List */
         .specs-list {
             list-style: none;
             margin-bottom: 30px;
@@ -175,7 +199,6 @@ if (!$item) {
             width: 130px;
         }
 
-        /* Interactive Action Button connecting directly to Imran's Cart logical flows */
         .btn-add-cart {
             background-color: var(--primary-color);
             color: white;
@@ -193,40 +216,59 @@ if (!$item) {
             background-color: var(--accent-color);
         }
 
-        /* Native Media Queries for Mobile Responsiveness */
+        footer {
+            background-color: var(--text-dark);
+            color: #ddd;
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 40px;
+            border-top: 3px solid var(--accent-color);
+            font-size: 14px;
+        }
+
         @media (max-width: 768px) {
-            .detail-container {
-                flex-direction: column;
-                margin: 20px;
-                padding: 15px;
-            }
-            .detail-image-panel {
-                height: 300px;
-            }
+            .detail-container { flex-direction: column; margin: 20px; padding: 15px; }
+            .detail-image-panel { height: 300px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Shared Unified Navigation Layout Header Area -->
     <header>
         <div class="nav-container">
             <div class="logo">
                 <h1>RETRO REVIVAL</h1>
             </div>
+            
+            <div class="search-bar">
+                <form action="products.php" method="GET">
+                    <input type="text" name="search" id="searchInput" placeholder="Search vintage items...">
+                    <button type="submit">Search</button>
+                </form>
+            </div>
+
             <ul class="nav-links">
                 <li><a href="index.php">Home</a></li>
                 <li><a href="products.php">Shop</a></li>
                 <li><a href="cart.php">Cart</a></li>
-                <li><a href="login.php">Login</a></li>
+                
+                <?php if (isset($_SESSION['User_ID'])): ?>
+                    <li><a href="order_history.php">My Orders</a></li>
+                    <?php if ($_SESSION['User_Role'] === 'seller'): ?>
+                        <li><a href="seller_dashboard.php">Seller Panel</a></li>
+                    <?php elseif ($_SESSION['User_Role'] === 'admin'): ?>
+                        <li><a href="admin_dashboard.php">Admin Panel</a></li>
+                    <?php endif; ?>
+                    <li><a href="logout.php" style="color: var(--accent-color);">Logout</a></li>
+                <?php else: ?>
+                    <li><a href="login.php">Login</a></li>
+                    <li><a href="register.php">Register</a></li>
+                <?php endif; ?>
             </ul>
         </div>
     </header>
 
-    <!-- Master Details Frame Block -->
     <main class="detail-container">
-        
-        <!-- Left Visual Side -->
         <div class="detail-image-panel">
             <?php if (!empty($item['ProductImage_Path'])): ?>
                 <img src="<?php echo htmlspecialchars($item['ProductImage_Path']); ?>" alt="<?php echo htmlspecialchars($item['Product_Name']); ?>">
@@ -235,16 +277,14 @@ if (!$item) {
             <?php endif; ?>
         </div>
 
-        <!-- Right Informational Side -->
         <div class="detail-info-panel">
             <h2><?php echo htmlspecialchars($item['Product_Name']); ?></h2>
             <div class="detail-price">RM <?php echo number_format($item['Product_Price'], 2); ?></div>
             
             <div class="detail-description">
-                <?php echo htmlspecialchars($item['Product_Description'] ? $item['Product_Description'] : 'No customized stylistic description added by the thrift store manager.'); ?>
+                <?php echo htmlspecialchars($item['Product_Description'] ? $item['Product_Description'] : 'No customized stylistic description added.'); ?>
             </div>
 
-            <!-- Descriptive Specs List Matrix -->
             <ul class="specs-list">
                 <li><strong>Size Tag:</strong> <?php echo htmlspecialchars($item['Product_Size'] ? $item['Product_Size'] : 'Free Size'); ?></li>
                 <li><strong>Condition Rating:</strong> <?php echo htmlspecialchars($item['Product_ConditionStatus']); ?></li>
@@ -252,7 +292,6 @@ if (!$item) {
                 <li><strong>Listed By Seller:</strong> <?php echo htmlspecialchars($item['Seller_Name'] ? $item['Seller_Name'] : 'Store Admin'); ?></li>
             </ul>
 
-            <!-- Dynamic POST form passing values cleanly into Imran's cart.php backend system -->
             <form action="cart.php" method="POST">
                 <input type="hidden" name="product_id" value="<?php echo $item['Product_ID']; ?>">
                 <input type="hidden" name="action" value="add">
@@ -261,5 +300,8 @@ if (!$item) {
         </div>
     </main>
 
+    <footer>
+        <p>&copy; 2026 Retro Revival Team 12 - MMU Project. All Rights Reserved.</p>
+    </footer>
 </body>
 </html>

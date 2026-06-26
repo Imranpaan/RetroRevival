@@ -79,7 +79,7 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
             line-height: 1.6;
         }
 
-        /* --- Reusable Header Configuration --- */
+        /* --- Unified Header & Navigation Bar --- */
         header {
             background-color: #fff;
             border-bottom: 2px solid var(--primary-color);
@@ -99,6 +99,7 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
             font-family: var(--serif-font);
             color: var(--primary-color);
             font-size: 24px;
+            letter-spacing: 1px;
         }
 
         .search-bar form {
@@ -110,6 +111,7 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
             border: 1px solid #ccc;
             border-radius: 4px 0 0 4px;
             width: 250px;
+            font-size: 14px;
         }
 
         .search-bar button {
@@ -125,15 +127,22 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
             display: flex;
             list-style: none;
             gap: 20px;
+            align-items: center;
         }
 
         .nav-links a {
             text-decoration: none;
             color: var(--text-dark);
             font-weight: bold;
+            font-size: 14px;
+            transition: color 0.3s;
         }
 
-        /* --- Two-Column Layout (Assignment Requirement) --- */
+        .nav-links a:hover {
+            color: var(--accent-color);
+        }
+
+        /* --- Two-Column Layout --- */
         .catalog-container {
             display: flex;
             max-width: 1200px;
@@ -142,7 +151,6 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
             gap: 30px;
         }
 
-        /* Narrow Left Sidebar Filters */
         .sidebar {
             flex: 1;
             max-width: 250px;
@@ -200,7 +208,6 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
             font-size: 13px;
         }
 
-        /* Wide Right Column Product Grid */
         .main-catalog {
             flex: 3;
         }
@@ -211,7 +218,6 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
             margin-bottom: 20px;
         }
 
-        /* Raw Native CSS Grid Layout */
         .product-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -265,6 +271,12 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
             margin-bottom: 12px;
         }
 
+        .btn-action-container {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
         .btn-view {
             display: block;
             background-color: var(--primary-color);
@@ -273,26 +285,31 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
             padding: 8px;
             border-radius: 4px;
             font-size: 13px;
+            transition: background 0.3s;
         }
 
-        /* --- Native Responsive Layout Media Queries --- */
+        .btn-view:hover {
+            background-color: var(--accent-color);
+        }
+
+        footer {
+            background-color: var(--text-dark);
+            color: #ddd;
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 40px;
+            border-top: 3px solid var(--accent-color);
+            font-size: 14px;
+        }
+
         @media (max-width: 900px) {
-            .catalog-container {
-                flex-direction: column;
-            }
-            .sidebar {
-                max-width: 100%;
-                width: 100%;
-            }
-            .product-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
+            .catalog-container { flex-direction: column; }
+            .sidebar { max-width: 100%; width: 100%; }
+            .product-grid { grid-template-columns: repeat(2, 1fr); }
         }
 
         @media (max-width: 500px) {
-            .product-grid {
-                grid-template-columns: 1fr;
-            }
+            .product-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -303,27 +320,36 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <div class="logo">
                 <h1>RETRO REVIVAL</h1>
             </div>
+            
             <div class="search-bar">
-                <form action="products.php" method="GET">
-                    <input type="text" name="search" value="<?php echo htmlspecialchars($search_filter); ?>" placeholder="Search vintage items...">
+                <form action="products.php" method="GET" onsubmit="return validateSearch()">
+                    <input type="text" name="search" id="searchInput" value="<?php echo htmlspecialchars($search_filter); ?>" placeholder="Search vintage items...">
                     <button type="submit">Search</button>
                 </form>
             </div>
+
             <ul class="nav-links">
                 <li><a href="index.php">Home</a></li>
                 <li><a href="products.php">Shop</a></li>
                 <li><a href="cart.php">Cart</a></li>
+                
                 <?php if (isset($_SESSION['User_ID'])): ?>
-                    <li><a href="logout.php">Logout</a></li>
+                    <li><a href="order_history.php">My Orders</a></li>
+                    <?php if ($_SESSION['User_Role'] === 'seller'): ?>
+                        <li><a href="seller_dashboard.php">Seller Panel</a></li>
+                    <?php elseif ($_SESSION['User_Role'] === 'admin'): ?>
+                        <li><a href="admin_dashboard.php">Admin Panel</a></li>
+                    <?php endif; ?>
+                    <li><a href="logout.php" style="color: var(--accent-color);">Logout</a></li>
                 <?php else: ?>
                     <li><a href="login.php">Login</a></li>
+                    <li><a href="register.php">Register</a></li>
                 <?php endif; ?>
             </ul>
         </div>
     </header>
 
     <div class="catalog-container">
-        
         <aside class="sidebar">
             <h3>Filters</h3>
             <form action="products.php" method="GET">
@@ -373,7 +399,10 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <h4><?php echo htmlspecialchars($item['Product_Name']); ?></h4>
                             <div class="product-condition"><?php echo htmlspecialchars($item['Product_ConditionStatus']); ?> (Size: <?php echo htmlspecialchars($item['Product_Size'] ? $item['Product_Size'] : 'N/A'); ?>)</div>
                             <div class="product-price">RM <?php echo number_format($item['Product_Price'], 2); ?></div>
-                            <a href="product_detail.php?id=<?php echo $item['Product_ID']; ?>" class="btn-view">View Details</a>
+                            <div class="btn-action-container">
+                                <a href="product_detail.php?id=<?php echo $item['Product_ID']; ?>" class="btn-view">View Details</a>
+                                <a href="cart.php?action=add&product_id=<?php echo $item['Product_ID']; ?>" class="btn-view" style="background-color: #2e8b57;">Add to Cart</a>
+                            </div>
                         </div>
                     <?php endforeach; ?>
                 <?php else: ?>
@@ -383,5 +412,19 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </main>
     </div>
 
+    <footer>
+        <p>&copy; 2026 Retro Revival Team 12 - MMU Project. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        function validateSearch() {
+            var searchInput = document.getElementById('searchInput').value.trim();
+            if (searchInput === "") {
+                alert("Please type an item name or style to search!");
+                return false;
+            }
+            return true;
+        }
+    </script>
 </body>
 </html>
