@@ -79,7 +79,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <select name="User_Role" required>
                     <option value="buyer">Buyer (Thrifter)</option>
                     <option value="seller">Seller (Vendor)</option>
-                    <option value="admin">Admin</option>
                 </select>
             </div>
             <button type="submit" class="btn-submit">Register Account</button>
