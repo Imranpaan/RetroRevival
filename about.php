@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us - Retro Revival</title>
     <style>
-        /* Native CSS styling to meet assignment constraints (No UI Frameworks) */
         body {
             font-family: sans-serif;
             background-color: #faf8f5; 
@@ -14,8 +13,7 @@
             padding: 0;
         }
         h1, h2 {
-            font-family: serif; /* Vintage character for headings */
-            color: #8B4513;
+            font-family: serif; 
             text-align: center;
         }
         .navbar {
@@ -47,7 +45,6 @@
             color: #555;
         }
         
-        /* Flexbox grid for the team member cards */
         .team-grid {
             display: flex;
             flex-wrap: wrap;
@@ -55,7 +52,6 @@
             gap: 25px;
         }
         
-        /* Individual Team Member Card Styling */
         .team-card {
             background-color: #fff;
             border: 2px solid #e0d8c8;

@@ -10,7 +10,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $admin_password = $_POST['Admin_Password'];
     $security_passcode = trim($_POST['Security_Passcode']);
 
-    // Secret master passcode constraint check
     $master_passcode = "RETRO_ADMIN_2026";
 
     if (empty($admin_name) || empty($admin_email) || empty($admin_password) || empty($security_passcode)) {
@@ -25,10 +24,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($stmtCheck->fetch()) {
             $message = "❌ Error: This email address is already registered.";
         } else {
-            // Hash password for system compliance
             $hashed_password = password_hash($admin_password, PASSWORD_BCRYPT);
             
-            // Force assign role as 'admin' automatically 
             $admin_role = 'admin';
 
             $stmtInsert = $pdo->prepare("

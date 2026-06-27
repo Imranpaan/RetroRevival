@@ -2,7 +2,7 @@
 session_start();
 include 'includes/db_connect.php';
 
-// Route Guard: Make sure a logged-in seller is accessing this
+
 if (!isset($_SESSION['User_ID'])) {
     header("Location: login.php");
     exit;
@@ -11,7 +11,7 @@ if (!isset($_SESSION['User_ID'])) {
 $seller_id = $_SESSION['User_ID']; 
 $message = "";
 
-// Get categories for dropdown
+
 $category_stmt = $pdo->query("SELECT * FROM category");
 $categories = $category_stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -26,32 +26,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stock = $_POST['Product_Stock'];
     $status = "pending";
 
-    // 1. FILE UPLOAD CORE LOGIC BLOCK
     $image_path = "";
     if (isset($_FILES['Product_Image']) && $_FILES['Product_Image']['error'] === UPLOAD_ERR_OK) {
         $file_tmp_path = $_FILES['Product_Image']['tmp_name'];
         $file_name = $_FILES['Product_Image']['name'];
         $file_extension = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
 
-        // Allowed extensions filter checklist
         $allowed_extensions = ['jpg', 'jpeg', 'png'];
 
         if (in_array($file_extension, $allowed_extensions)) {
-            // Set up target local directory
             $upload_dir = 'images/products/';
             
-            // Create the directory if it does not exist yet on your PC
             if (!is_dir($upload_dir)) {
                 mkdir($upload_dir, 0777, true);
             }
 
-            // Create a completely unique filename so users don't overwrite each other's graphics
             $new_file_name = uniqid('prod_', true) . '.' . $file_extension;
             $dest_path = $upload_dir . $new_file_name;
 
-            // Move the file from PHP temporary storage to your project directory
             if (move_uploaded_file($file_tmp_path, $dest_path)) {
-                $image_path = $dest_path; // Saved perfectly to pass to SQL!
+                $image_path = $dest_path;
             } else {
                 $message = "❌ Error: Could not move the uploaded image to destination directory.";
             }
@@ -62,7 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $message = "❌ Error: Please upload a valid product image asset file.";
     }
 
-    // STRICTOR VALIDATION: Check that everything (including our newly generated file path) is filled
+
     if (
         empty($category_id) || empty($product_name) || empty($description) || 
         empty($price) || empty($size) || empty($condition) || 
@@ -93,7 +87,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $product_id = $pdo->lastInsertId();
 
-        // Insert into image table using the new dynamic path
+
         $img_stmt = $pdo->prepare("
             INSERT INTO product_image 
             (Product_ID, ProductImage_Path)
@@ -302,7 +296,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="alert-message"><?= htmlspecialchars($message) ?></div>
         <?php endif; ?>
 
-        <!-- IMPORTANT NOTE FOR presentation: enctype attribute is mandatory for handling raw files -->
         <form method="POST" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="Category_ID">Category *</label>

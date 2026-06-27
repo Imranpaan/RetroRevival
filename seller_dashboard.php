@@ -86,7 +86,6 @@ function displayStatus($status, $stock) {
             line-height: 1.6;
         }
 
-        /* --- Unified Header & Navigation Bar --- */
         header {
             background-color: #fff;
             border-bottom: 2px solid var(--primary-color);
@@ -149,7 +148,6 @@ function displayStatus($status, $stock) {
             color: var(--accent-color);
         }
 
-        /* --- Main Layout Container --- */
         .container {
             max-width: 1100px;
             margin: 40px auto;
