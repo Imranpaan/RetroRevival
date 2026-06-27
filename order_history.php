@@ -1,18 +1,20 @@
 <?php
 // order_history.php
+session_start();
 
-$host = 'localhost';
-$dbname = 'retro_revival';
-$username = 'root';
-$password = '';
+// Route Guard: Force user authentication to view order logs
+if (!isset($_SESSION['User_ID'])) {
+    header("Location: login.php");
+    exit;
+}
+
+$buyerID = $_SESSION['User_ID']; 
+
+// Include your global unified connection schema file
+include 'includes/db_connect.php';
 
 try {
-    // 1. Connect to the database
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-    // 2. Fetch orders for our dummy user (Buyer_ID 3)
-    $buyerID = 3; 
+    // Fetch orders dynamically for the logged-in user
     $sql = "SELECT Order_ID, Order_TotalAmount, Order_Status, Order_ShippingAddress, Created_At 
             FROM orders 
             WHERE Buyer_ID = :buyerID 
@@ -38,7 +40,12 @@ try {
 <body>
     <header class="navbar">
         <div class="logo">Retro Revival</div>
-        <nav class="links">Home | Search | Cart | Profile</nav>
+        <nav class="links">
+            <a href="index.php">Home</a> | 
+            <a href="products.php">Search</a> | 
+            <a href="cart.php">Cart</a> | 
+            <a href="profile.php">Profile</a>
+        </nav>
     </header>
 
     <div class="container">
@@ -64,7 +71,6 @@ try {
                             <td><?= htmlspecialchars($order['Order_ShippingAddress']) ?></td>
                             <td>RM <?= htmlspecialchars(number_format($order['Order_TotalAmount'], 2)) ?></td>
                             <td>
-                                <!-- Dynamic status badge for your tracking feature -->
                                 <span class="status-badge status-<?= strtolower(htmlspecialchars($order['Order_Status'])) ?>">
                                     <?= htmlspecialchars($order['Order_Status']) ?>
                                 </span>
@@ -74,7 +80,7 @@ try {
                 </tbody>
             </table>
         <?php else: ?>
-            <p>You have not placed any orders yet.</p>
+            <p style="padding: 20px 0; color: #666;">You have not placed any orders yet.</p>
         <?php endif; ?>
     </div>
 </body>

@@ -1,3 +1,50 @@
+<?php
+session_start();
+
+// Database Connection
+$host = 'localhost';
+$dbname = 'retro_revival';
+$username = 'root';
+$password = '';
+
+try {
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die("Database connection failed: " . $e->getMessage());
+}
+
+// Route Guard: Force user to authenticate before checking out
+if (!isset($_SESSION['User_ID'])) {
+    header("Location: login.php");
+    exit;
+}
+
+$user_id = $_SESSION['User_ID'];
+
+$stmtCart = $pdo->prepare("SELECT Cart_ID FROM cart WHERE User_ID = ?");
+$stmtCart->execute([$user_id]);
+$cart = $stmtCart->fetch(PDO::FETCH_ASSOC);
+
+$cartItems = [];
+if ($cart) {
+    $cart_id = $cart['Cart_ID'];
+    
+    $stmtFetchCart = $pdo->prepare("
+        SELECT ci.CartItem_Quantity, p.Product_Name, p.Product_Price, p.Product_Size 
+        FROM cart_item ci
+        JOIN product p ON ci.Product_ID = p.Product_ID
+        WHERE ci.Cart_ID = ?
+    ");
+    $stmtFetchCart->execute([$cart_id]);
+    $cartItems = $stmtFetchCart->fetchAll(PDO::FETCH_ASSOC);
+}
+
+if (empty($cartItems)) {
+    header("Location: products.php");
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,49 +62,51 @@
             <a href="cart.php" style="color: white; text-decoration: none;">Cart</a> | 
         </nav>
     </header>
-    
+
     <div class="container">
         <h1>Checkout Process</h1>
-        
-        <!-- Table summarizing items, quantities and prices -->
         <h2>Order Summary</h2>
         <table class="checkout-table">
             <thead>
                 <tr>
                     <th>Item</th>
                     <th>Size</th>
+                    <th>Quantity</th>
                     <th>Price</th>
+                    <th>Subtotal</th>
                 </tr>
             </thead>
             <tbody>
-                <!-- We will populate this with PHP session data later -->
-                <tr>
-                    <td>Vintage Denim Jacket</td>
-                    <td>L</td>
-                    <td>RM 85.00</td>
-                </tr>
-                <tr>
-                    <td>Classic Batik Shirt</td>
-                    <td>M</td>
-                    <td>RM 45.00</td>
-                </tr>
+                <?php 
+                $grandTotal = 0;
+                foreach ($cartItems as $item): 
+                    $itemSubtotal = $item['Product_Price'] * $item['CartItem_Quantity'];
+                    $grandTotal += $itemSubtotal;
+                ?>
+                    <tr>
+                        <td><?= htmlspecialchars($item['Product_Name']) ?></td>
+                        <td><?= htmlspecialchars($item['Product_Size'] ? $item['Product_Size'] : 'N/A') ?></td>
+                        <td><?= htmlspecialchars($item['CartItem_Quantity']) ?></td>
+                        <td>RM <?= number_format($item['Product_Price'], 2) ?></td>
+                        <td>RM <?= number_format($itemSubtotal, 2) ?></td>
+                    </tr>
+                <?php endforeach; ?>
             </tbody>
         </table>
         <div class="cart-total">
-            <strong>Total Amount: RM 130.00</strong>
+            <strong>Total Amount: RM <?= number_format($grandTotal, 2) ?></strong>
         </div>
 
-        <!-- Checkout Form with Shipping Options -->
         <h2>Shipping & Payment Details</h2>
 
         <form action="process_order.php" method="POST" id="checkoutForm">
             <div class="form-group">
                 <label for="fullName">Full Name</label>
-                <input type="text" id="fullName" name="fullName" required>
+                <input type="text" id="fullName" name="fullName" value="<?= isset($_SESSION['User_Name']) ? htmlspecialchars($_SESSION['User_Name']) : '' ?>" required>
             </div>
             <div class="form-group">
                 <label for="address">Full Shipping Address</label>
-                <input type="text" id="address" name="address" required>
+                <input type="text" id="address" name="address" required placeholder="123, Jalan Vintage, Cyberjaya, Selangor">
             </div>
             
             <div class="shipping-options">

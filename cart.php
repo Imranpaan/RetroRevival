@@ -2,7 +2,6 @@
 session_start(); 
 require_once 'includes/db_connect.php';
 
-// Route Guard: Force login to manage database carts
 if (!isset($_SESSION['User_ID'])) {
     header("Location: login.php");
     exit;
@@ -10,7 +9,6 @@ if (!isset($_SESSION['User_ID'])) {
 
 $user_id = $_SESSION['User_ID'];
 
-// 1. Find or Create user's active Cart record
 $stmtCart = $pdo->prepare("SELECT Cart_ID FROM cart WHERE User_ID = ?");
 $stmtCart->execute([$user_id]);
 $cart = $stmtCart->fetch(PDO::FETCH_ASSOC);
@@ -23,7 +21,6 @@ if (!$cart) {
     $cart_id = $cart['Cart_ID'];
 }
 
-// 2. ACTION: Update quantities from cart inputs
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_cart'])) {
     $cart_item_id = $_POST['cart_item_id'];
     $quantity = (int)$_POST['quantity'];
@@ -38,8 +35,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_cart'])) {
     header("Location: cart.php");
     exit;
 }
+$action_trigger = isset($_POST['action']) ? $_POST['action'] : (isset($_GET['action']) ? $_GET['action'] : '');
+$prod_id_trigger = isset($_POST['product_id']) ? $_POST['product_id'] : (isset($_GET['product_id']) ? $_GET['product_id'] : 0);
 
-// 3. ACTION: Remove specific item record
+if ($action_trigger === 'add' && $prod_id_trigger > 0) {
+    $product_id = (int)$prod_id_trigger;
+    
+    $stmtCheckItem = $pdo->prepare("SELECT CartItem_ID, CartItem_Quantity FROM cart_item WHERE Cart_ID = ? AND Product_ID = ?");
+    $stmtCheckItem->execute([$cart_id, $product_id]);
+    $existingItem = $stmtCheckItem->fetch(PDO::FETCH_ASSOC);
+    
+    if ($existingItem) {
+        $newQty = $existingItem['CartItem_Quantity'] + 1;
+        $stmtUpdateQty = $pdo->prepare("UPDATE cart_item SET CartItem_Quantity = ? WHERE CartItem_ID = ?");
+        $stmtUpdateQty->execute([$newQty, $existingItem['CartItem_ID']]);
+    } else {
+        // If it's fresh, insert a new record row entry
+        $stmtInsertItem = $pdo->prepare("INSERT INTO cart_item (Cart_ID, Product_ID, CartItem_Quantity) VALUES (?, ?, 1)");
+        $stmtInsertItem->execute([$cart_id, $product_id]);
+    }
+    
+    header("Location: cart.php");
+    exit;
+}
+
+
 if (isset($_GET['remove'])) {
     $remove_id = (int)$_GET['remove'];
     $stmtRemove = $pdo->prepare("DELETE FROM cart_item WHERE CartItem_ID = ?");
@@ -48,7 +68,6 @@ if (isset($_GET['remove'])) {
     exit;
 }
 
-// 4. FETCH: Dynamic current contents for UI template rendering
 $stmtFetchCart = $pdo->prepare("
     SELECT ci.CartItem_ID, ci.CartItem_Quantity, p.Product_ID, p.Product_Name, p.Product_Price, p.Product_Size 
     FROM cart_item ci
@@ -80,6 +99,9 @@ $cartItems = $stmtFetchCart->fetchAll(PDO::FETCH_ASSOC);
         <h1>Your Shopping Cart</h1>
         <?php if (empty($cartItems)): ?>
             <p>Your shopping cart is currently empty. Start exploring vintage treasures!</p>
+            <br>
+            <a href="index.php" class="btn-shop-more" style="float: left;">Shop Treasures</a>
+            <div style="clear:both;"></div>
         <?php else: ?>
             <table>
                 <thead>
@@ -122,6 +144,7 @@ $cartItems = $stmtFetchCart->fetchAll(PDO::FETCH_ASSOC);
             </div>
             
             <a href="checkout.php" class="btn-checkout">Proceed to Checkout</a>
+            <a href="index.php" class="btn-shop-more">Shop More</a>
             <div style="clear:both;"></div>
         <?php endif; ?>
     </div>

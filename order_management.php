@@ -1,7 +1,15 @@
 <?php
-include 'includes/db_connect.php';
+session_start();
 
-$seller_id = 2; // Temporary seller ID for testing
+require_once 'includes/db_connect.php';
+
+// Route Guard: Ensure the user is logged in and is a seller
+if (!isset($_SESSION['User_ID']) || $_SESSION['User_Role'] !== 'seller') {
+    header("Location: login.php");
+    exit;
+}
+
+$seller_id = $_SESSION['User_ID']; 
 
 $stmt = $pdo->prepare("
     SELECT 
@@ -28,7 +36,7 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Order Management - Retro Revival</title>
@@ -54,7 +62,7 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
     </div>
 
-    <table>
+    <table class="dashboard-table">
         <tr>
             <th>Order ID</th>
             <th>Buyer</th>
@@ -77,16 +85,20 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </td>
                 <td><?= htmlspecialchars($order['Product_Name']) ?></td>
                 <td><?= htmlspecialchars($order['OrderItem_Quantity']) ?></td>
-                <td>RM <?= htmlspecialchars($order['OrderItem_Price']) ?></td>
-                <td>RM <?= htmlspecialchars($order['Total_Amount']) ?></td>
-                <td><?= htmlspecialchars($order['Order_Status']) ?></td>
+                <td>RM <?= htmlspecialchars(number_format($order['OrderItem_Price'], 2)) ?></td>
+                <td>RM <?= htmlspecialchars(number_format($order['Total_Amount'], 2)) ?></td>
+                <td>
+                    <span class="status-badge status-<?= htmlspecialchars($order['Order_Status']) ?>">
+                        <?= htmlspecialchars($order['Order_Status']) ?>
+                    </span>
+                </td>
                 <td><?= htmlspecialchars($order['Shipping_Address']) ?></td>
                 <td><?= htmlspecialchars($order['Created_At']) ?></td>
             </tr>
             <?php endforeach; ?>
             <?php else: ?>
             <tr>
-                <td colspan="9">No orders found.</td>
+                <td colspan="9" style="text-align:center; color:#666; padding:30px;">No orders found.</td>
             </tr>
         <?php endif; ?>
     </table>

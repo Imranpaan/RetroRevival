@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once 'includes/db_connect.php';
 
 $message = "";
@@ -17,7 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmtCheck->execute([$email]);
         
         if ($stmtCheck->rowCount() > 0) {
-            $message = "<p style='color:red;'>Email already registered!</p>";
+            $message = "<p style='color:red; text-align:center; font-weight:bold; margin-bottom:15px;'>Email already registered!</p>";
         } else {
             // Hash password securely as required by the assignment guidelines
             $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
@@ -29,11 +30,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 header("Location: login.php?registration=success");
                 exit;
             } else {
-                $message = "<p style='color:red;'>Registration failed. Try again.</p>";
+                $message = "<p style='color:red; text-align:center; font-weight:bold; margin-bottom:15px;'>Registration failed. Try again.</p>";
             }
         }
     } else {
-        $message = "<p style='color:red;'>Please fill in all required fields.</p>";
+        $message = "<p style='color:red; text-align:center; font-weight:bold; margin-bottom:15px;'>Please fill in all required fields.</p>";
     }
 }
 ?>
@@ -42,33 +43,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - Retro Revival</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+    <!-- Clean Portal Container -->
     <div class="container">
-        <h1>Create Account</h1>
+        <h2>Create Account</h2>
         <?= $message ?>
         <form method="POST" action="register.php" id="registerForm">
             <div class="form-group">
                 <label>Full Name *</label>
-                <input type="text" name="User_Name" required>
+                <input type="text" name="User_Name" required placeholder="Full Name">
             </div>
             <div class="form-group">
                 <label>Email Address *</label>
-                <input type="email" name="User_Email" required>
+                <input type="email" name="User_Email" required placeholder="Email Address">
             </div>
             <div class="form-group">
                 <label>Password *</label>
-                <input type="password" name="User_Password" required>
+                <input type="password" name="User_Password" required placeholder="••••••••">
             </div>
             <div class="form-group">
                 <label>Phone Number</label>
-                <input type="text" name="User_PhoneNumber">
+                <input type="text" name="User_PhoneNumber" placeholder="Phone Number">
             </div>
             <div class="form-group">
                 <label>Shipping Address</label>
-                <textarea name="User_Address" rows="3"></textarea>
+                <textarea name="User_Address" rows="2" placeholder="Address."></textarea>
             </div>
             <div class="form-group">
                 <label>Register As *</label>
@@ -78,9 +82,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <option value="admin">Admin</option>
                 </select>
             </div>
-            <button type="submit" class="btn-submit">Register</button>
+            <button type="submit" class="btn-submit">Register Account</button>
         </form>
-        <p style="text-align:center;">Already have an account? <a href="login.php" style="color: #8B4513;">Login here</a></p>
+        
+        <div class="link-text">
+            Already have an account? <a href="login.php">Login here</a>
+        </div>
+        
+        <div class="link-text" style="margin-top: 12px; font-size: 13px; border-top: 1px dashed #e0d0b0; padding-top: 12px;">
+            Are you an admin? <a href="register_admin.php" style="color: var(--accent-color);">Click here</a>
+        </div>
     </div>
 
 <script src="script.js"></script>

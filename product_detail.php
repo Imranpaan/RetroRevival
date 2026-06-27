@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-// 1. Database Connection Configuration
+// Database Connection
 $host = 'localhost';
 $dbname = 'retro_revival';
 $username = 'root';
@@ -14,10 +14,10 @@ try {
     die("Database connection failed: " . $e->getMessage());
 }
 
-// 2. Safely grab the product ID passed from the URL string
+// Safely grab the product ID passed from the URL string
 $product_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
-// 3. Query to fetch the item details and its seller info from Aliyah's tables
+// Query to fetch the item details and its seller info from Aliyah's tables
 $query = "SELECT p.*, pi.ProductImage_Path, u.User_Name AS Seller_Name
           FROM product p 
           LEFT JOIN product_image pi ON p.Product_ID = pi.Product_ID 
@@ -44,25 +44,41 @@ if (!$item) {
 </head>
 <body>
 
-    <!-- Shared Unified Navigation Layout Header Area -->
     <header>
         <div class="nav-container">
             <div class="logo">
                 <h1>RETRO REVIVAL</h1>
             </div>
+            
+            <div class="search-bar">
+                <form action="products.php" method="GET">
+                    <input type="text" name="search" id="searchInput" placeholder="Search vintage items...">
+                    <button type="submit">Search</button>
+                </form>
+            </div>
+
             <ul class="nav-links">
                 <li><a href="index.php">Home</a></li>
                 <li><a href="products.php">Shop</a></li>
                 <li><a href="cart.php">Cart</a></li>
-                <li><a href="login.php">Login</a></li>
+                
+                <?php if (isset($_SESSION['User_ID'])): ?>
+                    <li><a href="order_history.php">My Orders</a></li>
+                    <?php if ($_SESSION['User_Role'] === 'seller'): ?>
+                        <li><a href="seller_dashboard.php">Seller Panel</a></li>
+                    <?php elseif ($_SESSION['User_Role'] === 'admin'): ?>
+                        <li><a href="admin_dashboard.php">Admin Panel</a></li>
+                    <?php endif; ?>
+                    <li><a href="logout.php" style="color: var(--accent-color);">Logout</a></li>
+                <?php else: ?>
+                    <li><a href="login.php">Login</a></li>
+                    <li><a href="register.php">Register</a></li>
+                <?php endif; ?>
             </ul>
         </div>
     </header>
 
-    <!-- Master Details Frame Block -->
     <main class="detail-container">
-        
-        <!-- Left Visual Side -->
         <div class="detail-image-panel">
             <?php if (!empty($item['ProductImage_Path'])): ?>
                 <img src="<?php echo htmlspecialchars($item['ProductImage_Path']); ?>" alt="<?php echo htmlspecialchars($item['Product_Name']); ?>">
@@ -71,16 +87,14 @@ if (!$item) {
             <?php endif; ?>
         </div>
 
-        <!-- Right Informational Side -->
         <div class="detail-info-panel">
             <h2><?php echo htmlspecialchars($item['Product_Name']); ?></h2>
             <div class="detail-price">RM <?php echo number_format($item['Product_Price'], 2); ?></div>
             
             <div class="detail-description">
-                <?php echo htmlspecialchars($item['Product_Description'] ? $item['Product_Description'] : 'No customized stylistic description added by the thrift store manager.'); ?>
+                <?php echo htmlspecialchars($item['Product_Description'] ? $item['Product_Description'] : 'No customized stylistic description added.'); ?>
             </div>
 
-            <!-- Descriptive Specs List Matrix -->
             <ul class="specs-list">
                 <li><strong>Size Tag:</strong> <?php echo htmlspecialchars($item['Product_Size'] ? $item['Product_Size'] : 'Free Size'); ?></li>
                 <li><strong>Condition Rating:</strong> <?php echo htmlspecialchars($item['Product_ConditionStatus']); ?></li>
@@ -88,7 +102,6 @@ if (!$item) {
                 <li><strong>Listed By Seller:</strong> <?php echo htmlspecialchars($item['Seller_Name'] ? $item['Seller_Name'] : 'Store Admin'); ?></li>
             </ul>
 
-            <!-- Dynamic POST form passing values cleanly into Imran's cart.php backend system -->
             <form action="cart.php" method="POST">
                 <input type="hidden" name="product_id" value="<?php echo $item['Product_ID']; ?>">
                 <input type="hidden" name="action" value="add">
@@ -97,5 +110,8 @@ if (!$item) {
         </div>
     </main>
 
+    <footer>
+        <p>&copy; 2026 Retro Revival Team 12 - MMU Project. All Rights Reserved.</p>
+    </footer>
 </body>
 </html>

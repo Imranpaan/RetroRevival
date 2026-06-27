@@ -1,8 +1,6 @@
 <?php
-// Start session to track logged-in users (Imran's requirements)
 session_start();
 
-// Database Connection using PDO (A'liah's configuration structure)
 $host = 'localhost';
 $dbname = 'retro_revival';
 $username = 'root';
@@ -36,7 +34,6 @@ $featured_products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </head>
 <body>
 
-    <!-- Top Navigation Bar -->
     <header>
         <div class="nav-container">
             <div class="logo">
@@ -55,7 +52,6 @@ $featured_products = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <li><a href="products.php">Shop</a></li>
                 <li><a href="cart.php">Cart</a></li>
                 
-                <!-- Dynamic Auth Checking Block (Imran's session mapping) -->
                 <?php if (isset($_SESSION['User_ID'])): ?>
                     <li><a href="order_history.php">My Orders</a></li>
                     <?php if ($_SESSION['User_Role'] === 'seller'): ?>
@@ -72,14 +68,11 @@ $featured_products = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
     </header>
 
-    <!-- Interactive Banner -->
     <section class="hero">
         <h2>Revive the Fashion Era</h2>
         <p>Discover carefully curated preloved Malaysian traditional outfits, vintage streetwear, retro accessories, and timeless styles.</p>
         <a href="products.php" class="hero-btn">Explore Collection</a>
     </section>
-
-    <!-- Quick Collection Links -->
     <section class="categories-section">
         <h2>Browse by Category</h2>
         <div class="category-flex">
@@ -89,7 +82,6 @@ $featured_products = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
     </section>
 
-    <!-- Dynamic Marketplace Grid Loop -->
     <section class="featured-section">
         <h2>Featured Arrivals</h2>
         <div class="product-grid">
@@ -118,12 +110,10 @@ $featured_products = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
     </section>
 
-    <!-- Copyright Footer Area -->
     <footer>
         <p>&copy; 2026 Retro Revival Team 12 - MMU Project. All Rights Reserved.</p>
     </footer>
 
-    <!-- Client-side Input Validation script -->
     <script>
         function validateSearch() {
             var searchInput = document.getElementById('searchInput').value.trim();

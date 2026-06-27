@@ -5,7 +5,7 @@ require_once 'includes/db_connect.php';
 $message = "";
 
 if (isset($_GET['registration']) && $_GET['registration'] == 'success') {
-    $message = "<p style='color:green; text-align:center;'>Registration successful! Please log in.</p>";
+    $message = "<p style='color:green; text-align:center; font-weight:bold; margin-bottom:15px;'>Registration successful! Please log in.</p>";
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -35,7 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
             exit;
         } else {
-            $message = "<p style='color:red; text-align:center;'>Invalid email or password.</p>";
+            $message = "<p style='color:red; text-align:center; font-weight:bold; margin-bottom:15px;'>Invalid email or password.</p>";
         }
     }
 }
@@ -45,25 +45,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Retro Revival</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+    <!-- Clean Portal Container -->
     <div class="container">
-        <h1>Login</h1>
+        <h2>Account Login</h2>
         <?= $message ?>
         <form method="POST" action="login.php" id="loginForm">
             <div class="form-group">
                 <label>Email Address</label>
-                <input type="email" name="User_Email" required>
+                <input type="email" name="User_Email" required placeholder="e.g. buyer@retro.com">
             </div>
             <div class="form-group">
                 <label>Password</label>
-                <input type="password" name="User_Password" required>
+                <input type="password" name="User_Password" required placeholder="••••••••">
             </div>
             <button type="submit" class="btn-submit">Sign In</button>
         </form>
-        <p style="text-align:center;">New user? <a href="register.php" style="color: #8B4513;">Register here</a></p>
+        
+        <div class="link-text">
+            New to the portal? <a href="register.php">Register here</a>
+        </div>
     </div>
 
 <script src="script.js"></script>

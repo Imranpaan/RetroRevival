@@ -1,7 +1,18 @@
 <?php
 session_start();
 
-require_once 'includes/db_connect.php';
+// Database Connection
+$host = 'localhost';
+$dbname = 'retro_revival';
+$username = 'root';
+$password = '';
+
+try {
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die("Database connection failed: " . $e->getMessage());
+}
 
 // Route Guard: Ensure the user is logged in and is a seller
 if (!isset($_SESSION['User_ID']) || $_SESSION['User_Role'] !== 'seller') {
@@ -103,7 +114,7 @@ function displayStatus($status, $stock) {
                             <?php if (!empty($product['ProductImage_Path'])): ?>
                                 <img src="<?= htmlspecialchars($product['ProductImage_Path']) ?>" width="70" height="70" class="product-img" alt="Product Image">
                             <?php else: ?>
-                                <div class="product-img" style="width:70px; height:70px;">No image</div>
+                                <div class="product-img" style="width:70px; height:70px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; color: #999;">No image</div>
                             <?php endif; ?>
                         </td>
                         <td><strong><?= htmlspecialchars($product['Product_Name']) ?></strong></td>

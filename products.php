@@ -65,27 +65,36 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <div class="logo">
                 <h1>RETRO REVIVAL</h1>
             </div>
+            
             <div class="search-bar">
-                <form action="products.php" method="GET">
-                    <input type="text" name="search" value="<?php echo htmlspecialchars($search_filter); ?>" placeholder="Search vintage items...">
+                <form action="products.php" method="GET" onsubmit="return validateSearch()">
+                    <input type="text" name="search" id="searchInput" value="<?php echo htmlspecialchars($search_filter); ?>" placeholder="Search vintage items...">
                     <button type="submit">Search</button>
                 </form>
             </div>
+
             <ul class="nav-links">
                 <li><a href="index.php">Home</a></li>
                 <li><a href="products.php">Shop</a></li>
                 <li><a href="cart.php">Cart</a></li>
+                
                 <?php if (isset($_SESSION['User_ID'])): ?>
-                    <li><a href="logout.php">Logout</a></li>
+                    <li><a href="order_history.php">My Orders</a></li>
+                    <?php if ($_SESSION['User_Role'] === 'seller'): ?>
+                        <li><a href="seller_dashboard.php">Seller Panel</a></li>
+                    <?php elseif ($_SESSION['User_Role'] === 'admin'): ?>
+                        <li><a href="admin_dashboard.php">Admin Panel</a></li>
+                    <?php endif; ?>
+                    <li><a href="logout.php" style="color: var(--accent-color);">Logout</a></li>
                 <?php else: ?>
                     <li><a href="login.php">Login</a></li>
+                    <li><a href="register.php">Register</a></li>
                 <?php endif; ?>
             </ul>
         </div>
     </header>
 
     <div class="catalog-container">
-        
         <aside class="sidebar">
             <h3>Filters</h3>
             <form action="products.php" method="GET">
@@ -135,7 +144,10 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <h4><?php echo htmlspecialchars($item['Product_Name']); ?></h4>
                             <div class="product-condition"><?php echo htmlspecialchars($item['Product_ConditionStatus']); ?> (Size: <?php echo htmlspecialchars($item['Product_Size'] ? $item['Product_Size'] : 'N/A'); ?>)</div>
                             <div class="product-price">RM <?php echo number_format($item['Product_Price'], 2); ?></div>
-                            <a href="product_detail.php?id=<?php echo $item['Product_ID']; ?>" class="btn-view">View Details</a>
+                            <div class="btn-action-container">
+                                <a href="product_detail.php?id=<?php echo $item['Product_ID']; ?>" class="btn-view">View Details</a>
+                                <a href="cart.php?action=add&product_id=<?php echo $item['Product_ID']; ?>" class="btn-view" style="background-color: #2e8b57;">Add to Cart</a>
+                            </div>
                         </div>
                     <?php endforeach; ?>
                 <?php else: ?>
@@ -145,5 +157,19 @@ $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </main>
     </div>
 
+    <footer>
+        <p>&copy; 2026 Retro Revival Team 12 - MMU Project. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        function validateSearch() {
+            var searchInput = document.getElementById('searchInput').value.trim();
+            if (searchInput === "") {
+                alert("Please type an item name or style to search!");
+                return false;
+            }
+            return true;
+        }
+    </script>
 </body>
 </html>
