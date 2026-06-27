@@ -33,61 +33,7 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order History - Retro Revival</title>
-    <style>
-        /* Native CSS to meet assignment constraints (No Frameworks) */
-        body {
-            font-family: sans-serif;
-            background-color: #faf8f5; 
-            color: #333;
-            margin: 0;
-            padding: 0;
-        }
-        h1, h2 {
-            font-family: serif; 
-            color: #8B4513;
-        }
-        .navbar {
-            background-color: #333;
-            color: #fff;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-        }
-        .container {
-            max-width: 900px;
-            margin: 40px auto;
-            padding: 20px;
-            background-color: #fff;
-            border: 1px solid #ccc;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        .order-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        .order-table th, .order-table td {
-            border: 1px solid #ccc;
-            padding: 12px;
-            text-align: left;
-        }
-        .order-table th {
-            background-color: #fdf5e6;
-            color: #8B4513;
-        }
-        /* Styling for the tracking feature */
-        .status-badge {
-            padding: 5px 10px;
-            border-radius: 12px;
-            font-size: 0.9em;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-        .status-pending { background-color: #ffe4b5; color: #d2691e; }
-        .status-shipped { background-color: #add8e6; color: #00008b; }
-        .status-delivered { background-color: #98fb98; color: #006400; }
-        .status-cancelled { background-color: #ffcccb; color: #8b0000; }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header class="navbar">

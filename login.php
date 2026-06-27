@@ -28,8 +28,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 header("Location: admin_dashboard.php");
             } elseif ($user['User_Role'] == 'seller') {
                 header("Location: seller_dashboard.php");
+            } elseif ($user['User_Role'] == 'buyer') {
+                header("Location: products.php");
             } else {
-                header("Location: cart.php"); // Buyers go to main display portal
+                header("Location: index.php");
             }
             exit;
         } else {
@@ -38,27 +40,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Login - Retro Revival</title>
-    <style>
-        body { font-family: sans-serif; background-color: #faf8f5; color: #333; margin: 0; padding: 0; }
-        h1 { font-family: serif; color: #8B4513; text-align: center; }
-        .container { max-width: 400px; margin: 80px auto; padding: 20px; background-color: #fff; border: 1px solid #ccc; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
-        .form-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        .btn-submit { background-color: #8B4513; color: white; border: none; padding: 12px; cursor: pointer; width: 100%; font-weight: bold; font-size: 16px; }
-        .btn-submit:hover { background-color: #a0522d; }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <h1>Login</h1>
         <?= $message ?>
-        <form method="POST" action="login.php">
+        <form method="POST" action="login.php" id="loginForm">
             <div class="form-group">
                 <label>Email Address</label>
                 <input type="email" name="User_Email" required>
@@ -71,5 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </form>
         <p style="text-align:center;">New user? <a href="register.php" style="color: #8B4513;">Register here</a></p>
     </div>
+
+<script src="script.js"></script>
 </body>
 </html>

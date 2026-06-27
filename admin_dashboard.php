@@ -50,25 +50,15 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Retro Revival</title>
-    <style>
-        /* Native CSS to meet assignment constraints */
-        body { font-family: sans-serif; background-color: #faf8f5; color: #333; margin: 0; padding: 0; }
-        h1, h2 { font-family: serif; color: #8B4513; }
-        .navbar { background-color: #333; color: #fff; padding: 15px 20px; display: flex; justify-content: space-between; }
-        .container { max-width: 1000px; margin: 40px auto; padding: 20px; background-color: #fff; border: 1px solid #ccc; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
-        th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
-        th { background-color: #fdf5e6; color: #8B4513; }
-        select { padding: 6px; border: 1px solid #ccc; border-radius: 4px; }
-        .btn-update { background-color: #2e8b57; color: white; border: none; padding: 8px 12px; cursor: pointer; font-weight: bold; border-radius: 4px; }
-        .btn-update:hover { background-color: #246b43; }
-        .status-badge { background-color: #eee; padding: 4px 8px; border-radius: 4px; font-size: 0.9em; text-transform: uppercase; }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header class="navbar">
-        <div class="logo">Retro Revival - ADMIN PANEL</div>
-        <nav class="links">Dashboard | Logout</nav>
+        <div class="logo">Retro Revival - ADMIN </div>
+        <nav class="links">
+            <a href="index.php">Home</a> |
+            <a href="logout.php">Logout</a>
+        </nav>
     </header>
 
     <div class="container">

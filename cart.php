@@ -64,20 +64,7 @@ $cartItems = $stmtFetchCart->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <title>Shopping Cart - Retro Revival</title>
-    <style>
-        body { font-family: sans-serif; background-color: #faf8f5; color: #333; margin: 0; padding: 0; }
-        h1, h2 { font-family: serif; color: #8B4513; }
-        .navbar { background-color: #333; color: #fff; padding: 15px 20px; display: flex; justify-content: space-between; }
-        .navbar a { color: white; text-decoration: none; padding: 0 10px; }
-        .container { max-width: 900px; margin: 40px auto; padding: 20px; background-color: #fff; border: 1px solid #ccc; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        th, td { padding: 12px; border-bottom: 1px solid #ddd; text-align: left; }
-        th { background-color: #fdf5e6; color: #8B4513; }
-        .total-box { text-align: right; font-size: 1.2em; margin: 20px 0; color: #8B4513; }
-        .btn-checkout { display: block; width: 200px; text-align: center; float: right; background-color: #2e8b57; color: white; padding: 12px; text-decoration: none; font-weight: bold; border-radius: 4px; }
-        .btn-checkout:hover { background-color: #246b43; }
-        .remove-link { color: #cc0000; text-decoration: none; font-weight: bold; }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header class="navbar">

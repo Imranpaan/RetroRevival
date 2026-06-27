@@ -37,27 +37,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Register - Retro Revival</title>
-    <style>
-        body { font-family: sans-serif; background-color: #faf8f5; color: #333; margin: 0; padding: 0; }
-        h1 { font-family: serif; color: #8B4513; text-align: center; }
-        .container { max-width: 450px; margin: 40px auto; padding: 20px; background-color: #fff; border: 1px solid #ccc; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
-        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        .btn-submit { background-color: #8B4513; color: white; border: none; padding: 12px; cursor: pointer; width: 100%; font-weight: bold; font-size: 16px; }
-        .btn-submit:hover { background-color: #a0522d; }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <h1>Create Account</h1>
         <?= $message ?>
-        <form method="POST" action="register.php">
+        <form method="POST" action="register.php" id="registerForm">
             <div class="form-group">
                 <label>Full Name *</label>
                 <input type="text" name="User_Name" required>
@@ -83,11 +75,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <select name="User_Role" required>
                     <option value="buyer">Buyer (Thrifter)</option>
                     <option value="seller">Seller (Vendor)</option>
+                    <option value="admin">Admin</option>
                 </select>
             </div>
             <button type="submit" class="btn-submit">Register</button>
         </form>
         <p style="text-align:center;">Already have an account? <a href="login.php" style="color: #8B4513;">Login here</a></p>
     </div>
+
+<script src="script.js"></script>
 </body>
 </html>

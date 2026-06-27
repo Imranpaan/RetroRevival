@@ -1,7 +1,14 @@
 <?php
-include 'includes/db_connect.php';
+session_start();
 
-$seller_id = 2; 
+require_once 'includes/db_connect.php';
+
+if (!isset($_SESSION['User_ID']) || $_SESSION['User_Role'] !== 'seller') {
+    header("Location: login.php");
+    exit;
+}
+
+$seller_id = $_SESSION['User_ID'];
 
 if (!isset($_GET['id'])) {
     die("Product ID not provided.");

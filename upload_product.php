@@ -1,7 +1,14 @@
 <?php
-include 'includes/db_connect.php';
+session_start();
 
-$seller_id = 2; 
+require_once 'includes/db_connect.php';
+
+if (!isset($_SESSION['User_ID']) || $_SESSION['User_Role'] !== 'seller') {
+    header("Location: login.php");
+    exit;
+}
+
+$seller_id = $_SESSION['User_ID']; 
 $message = "";
 
 // Get categories for dropdown
@@ -66,13 +73,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 <body>
 
-<h1>Upload Product</h1>
+<div class="container seller-page">
 
-<a href="seller_dashboard.php" class="btn">Back to Dashboard</a>
+    <h1>Upload Product</h1>
 
-<p><?= htmlspecialchars($message) ?></p>
+    <a href="seller_dashboard.php" class="btn back-link">Back to Dashboard</a>
 
-<form method="POST">
+    <p class="seller-message"><?= htmlspecialchars($message) ?></p>
+
+    <form method="POST" class="seller-form" id="productForm">
 
     <label>Category:</label>
     <select name="Category_ID" required>
@@ -113,9 +122,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <label>Image:</label>
     <input type="text" name="ProductImage_Path" placeholder="images/products/hoodie_1.jpg">
 
-    <button type="submit">Upload Product</button>
+    <button type="submit" class="btn-submit">Upload Product</button>
 
-</form>
+    </form>
 
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>

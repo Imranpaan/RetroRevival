@@ -30,51 +30,68 @@ $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <title>Order Management - Retro Revival</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h1>Seller Order Management</h1>
+<header class="navbar">
+    <div class="logo">Retro Revival</div>
+    <nav>
+        <a href="seller_dashboard.php">Dashboard</a>
+        <a href="upload_product.php">Upload Product</a>
+        <a href="logout.php">Logout</a>
+    </nav>
+</header>
 
-<a href="seller_dashboard.php" class="btn">Back to Dashboard</a>
+<div class="container">
 
-<table>
-    <tr>
-        <th>Order ID</th>
-        <th>Buyer</th>
-        <th>Product</th>
-        <th>Quantity</th>
-        <th>Item Price</th>
-        <th>Total Amount</th>
-        <th>Status</th>
-        <th>Shipping Address</th>
-        <th>Date</th>
-    </tr>
+    <div class="dashboard-header">
+        <h1>Order Management</h1>
+        <div class="btn-group">
+            <a href="seller_dashboard.php" class="btn-secondary">Back to Dashboard</a>
+        </div>
+    </div>
 
-    <?php if (count($orders) > 0): ?>
-        <?php foreach ($orders as $order): ?>
+    <table>
         <tr>
-            <td><?= htmlspecialchars($order['Order_ID']) ?></td>
-            <td>
-                <?= htmlspecialchars($order['Buyer_Name']) ?><br>
-                <?= htmlspecialchars($order['Buyer_Email']) ?>
-            </td>
-            <td><?= htmlspecialchars($order['Product_Name']) ?></td>
-            <td><?= htmlspecialchars($order['OrderItem_Quantity']) ?></td>
-            <td>RM <?= htmlspecialchars($order['OrderItem_Price']) ?></td>
-            <td>RM <?= htmlspecialchars($order['Total_Amount']) ?></td>
-            <td><?= htmlspecialchars($order['Order_Status']) ?></td>
-            <td><?= htmlspecialchars($order['Shipping_Address']) ?></td>
-            <td><?= htmlspecialchars($order['Created_At']) ?></td>
+            <th>Order ID</th>
+            <th>Buyer</th>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Item Price</th>
+            <th>Total Amount</th>
+            <th>Status</th>
+            <th>Shipping Address</th>
+            <th>Date</th>
         </tr>
-        <?php endforeach; ?>
-    <?php else: ?>
-        <tr>
-            <td colspan="9">No orders found.</td>
-        </tr>
-    <?php endif; ?>
-</table>
+
+        <?php if (count($orders) > 0): ?>
+            <?php foreach ($orders as $order): ?>
+            <tr>
+                <td><?= htmlspecialchars($order['Order_ID']) ?></td>
+                <td>
+                    <?= htmlspecialchars($order['Buyer_Name']) ?><br>
+                    <?= htmlspecialchars($order['Buyer_Email']) ?>
+                </td>
+                <td><?= htmlspecialchars($order['Product_Name']) ?></td>
+                <td><?= htmlspecialchars($order['OrderItem_Quantity']) ?></td>
+                <td>RM <?= htmlspecialchars($order['OrderItem_Price']) ?></td>
+                <td>RM <?= htmlspecialchars($order['Total_Amount']) ?></td>
+                <td><?= htmlspecialchars($order['Order_Status']) ?></td>
+                <td><?= htmlspecialchars($order['Shipping_Address']) ?></td>
+                <td><?= htmlspecialchars($order['Created_At']) ?></td>
+            </tr>
+            <?php endforeach; ?>
+            <?php else: ?>
+            <tr>
+                <td colspan="9">No orders found.</td>
+            </tr>
+        <?php endif; ?>
+    </table>
+
+</div>
 
 </body>
 </html>
