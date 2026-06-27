@@ -333,10 +333,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <label for="Product_ConditionStatus">Condition Status *</label>
                 <select name="Product_ConditionStatus" id="Product_ConditionStatus" required>
                     <option value="" disabled selected>-- Select Condition --</option>
-                    <option value="New">New</option>
-                    <option value="Excellent">Excellent</option>
-                    <option value="Good">Good</option>
-                    <option value="Well-loved">Well-loved</option>
+                    <option value="Excellent condition (4/4)">Excellent condition (4/4)</option>
+                    <option value="Good condition (3/4)">Good condition (3/4)</option>
+                    <option value="Taken care but not that good (2/4)">Taken care but not that good (2/4)</option>
+                    <option value="Wearable (1/4)">Wearable (1/4)</option>
                 </select>
             </div>
 
@@ -350,7 +350,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <input type="number" name="Product_Stock" id="Product_Stock" value="1" min="0" required>
             </div>
 
-            <!-- UPDATED FROM TEXT BOX IN image_d7ca81.png TO NATIVE FILE BROWSER ELEMENT -->
             <div class="form-group">
                 <label for="Product_Image">Upload Product Image Asset *</label>
                 <input type="file" name="Product_Image" id="Product_Image" accept=".jpg, .jpeg, .png" required>
