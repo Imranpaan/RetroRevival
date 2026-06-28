@@ -166,7 +166,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <input type="number" name="Product_Stock" value="1" min="0" required>
 
     <label>Image:</label>
-    <input type="text" name="ProductImage_Path" placeholder="images/products/hoodie_1.jpg" accept=".jpg,.jpeg,.png" required>
+    <input type="file" name="Product_Image" placeholder="images/products/hoodie_1.jpg" accept=".jpg,.jpeg,.png" required>
 
     <button type="submit" class="btn-submit">Upload Product</button>
 
