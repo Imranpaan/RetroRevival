@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 16, 2026 at 10:58 AM
+-- Generation Time: Jun 28, 2026 at 03:21 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.1.25
 
@@ -33,6 +33,14 @@ CREATE TABLE `cart` (
   `Created_At` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `cart`
+--
+
+INSERT INTO `cart` (`Cart_ID`, `User_ID`, `Created_At`) VALUES
+(1, 4, '2026-06-27 04:19:27'),
+(2, 5, '2026-06-27 10:38:35');
+
 -- --------------------------------------------------------
 
 --
@@ -45,6 +53,13 @@ CREATE TABLE `cart_item` (
   `Product_ID` int(11) NOT NULL,
   `CartItem_Quantity` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `cart_item`
+--
+
+INSERT INTO `cart_item` (`CartItem_ID`, `Cart_ID`, `Product_ID`, `CartItem_Quantity`) VALUES
+(1, 1, 6, 1);
 
 -- --------------------------------------------------------
 
@@ -137,7 +152,11 @@ CREATE TABLE `product` (
 
 INSERT INTO `product` (`Product_ID`, `Seller_ID`, `Category_ID`, `Product_Name`, `Product_Description`, `Product_Price`, `Product_Size`, `Product_ConditionStatus`, `Product_ConditionDetails`, `Product_Stock`, `Product_Status`, `Created_At`) VALUES
 (1, 2, 1, 'Vintage Baju Kurung', 'Preloved traditional baju kurung in excellent condition.', 45.00, 'M', '', '', 1, 'approved', '2026-06-15 05:02:05'),
-(5, 2, 1, 'Duckie T-shirt', 'Preloved graphic t-shirt suitable for casual wear', 20.02, 'L', 'Good', 'Colour is still nice. Minor fading on the print, but no holes or major stains', 1, 'pending', '2026-06-16 04:40:18');
+(5, 2, 1, 'Duckie T-shirt', 'Preloved graphic t-shirt suitable for casual wear', 20.02, 'L', 'Good', 'Colour is still nice. Minor fading on the print, but no holes or major stains', 1, 'approved', '2026-06-16 04:40:18'),
+(6, 4, 2, 'Grey Converse Shoes', 'Converse shoes in color grey', 35.90, '39', 'Good', 'only wore it for 5 times and its still in good condition', 0, 'sold_out', '2026-06-27 09:24:35'),
+(7, 4, 2, '70s Vintage New Balance', 'Rare blue new balance shoes', 65.00, '38', 'Excellent', 'Only wore it once', 1, 'approved', '2026-06-27 10:10:01'),
+(8, 4, 1, 'Grey Hoodie', 'old grey hoodie', 10.00, 'M', 'Well-loved', 'good to wear for winter', 1, 'pending', '2026-06-28 05:20:26'),
+(9, 4, 2, 'Puma Sneakers', 'old puma sneakers', 15.00, '38', 'Well-loved', 'can still be use for walking', 1, 'pending', '2026-06-28 05:26:07');
 
 -- --------------------------------------------------------
 
@@ -156,7 +175,11 @@ CREATE TABLE `product_image` (
 --
 
 INSERT INTO `product_image` (`ProductImage_ID`, `Product_ID`, `ProductImage_Path`) VALUES
-(4, 5, 'images/products/duckie_t-shirt.png');
+(4, 5, 'images/products/duckie_t-shirt.png'),
+(5, 6, 'images/products/converse_grey_shoes'),
+(6, 7, 'images/products/blue_newbalance_shoes.png'),
+(7, 8, 'images/products/prod_6a40af1aa0ca29.20962670.png'),
+(8, 9, 'images/products/prod_6a40b06f463755.50204756.png');
 
 -- --------------------------------------------------------
 
@@ -183,7 +206,9 @@ CREATE TABLE `user` (
 INSERT INTO `user` (`User_ID`, `User_Name`, `User_Email`, `User_Password`, `User_PhoneNumber`, `User_Address`, `User_Role`, `User_Status`, `Created_At`) VALUES
 (1, 'Alice Tan', 'alice.tan@example.com', 'abc123', '0123456789', 'Cyberjaya', 'admin', 'active', '2026-06-14 12:05:07'),
 (2, 'Daniel Lee', 'daniel.lee@example.com', 'def456', '0198765432', 'Klang', 'seller', 'active', '2026-06-14 12:05:07'),
-(3, 'Sarah Qistina', 'sarah.qistina@example.com', 'ghi789', '0172233445', 'Shah Alam', 'buyer', 'active', '2026-06-14 12:05:07');
+(3, 'Sarah Qistina', 'sarah.qistina@example.com', 'ghi789', '0172233445', 'Shah Alam', 'buyer', 'active', '2026-06-14 12:05:07'),
+(4, 'aliah', 'alia67@gmail.com', '$2y$10$7ieXsc37EVQSSWoacpl83O7P8KUiINjUPV9E0K622dW5bV/c68chG', '012345678', 'Malaysia', 'seller', 'active', '2026-06-27 03:54:11'),
+(5, 'maria', 'mar_14@gmail.com', '$2y$10$VBzsbfWJQ/rSd12UALb8lOgY4tBBUvJkx6Wd3K/.LcJhtkatIeqpm', '018765432', '', 'admin', 'active', '2026-06-27 10:23:40');
 
 --
 -- Indexes for dumped tables
@@ -263,13 +288,13 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `Cart_ID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `Cart_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `cart_item`
 --
 ALTER TABLE `cart_item`
-  MODIFY `CartItem_ID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `CartItem_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `category`
@@ -299,19 +324,19 @@ ALTER TABLE `payment`
 -- AUTO_INCREMENT for table `product`
 --
 ALTER TABLE `product`
-  MODIFY `Product_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `Product_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `product_image`
 --
 ALTER TABLE `product_image`
-  MODIFY `ProductImage_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `ProductImage_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `User_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `User_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Constraints for dumped tables
