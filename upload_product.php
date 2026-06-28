@@ -151,9 +151,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <label>Size:</label>
     <input type="text" name="Product_Size" required>
 
-    <label>Size:</label>
-    <input type="text" name="Product_Size">
-
     <label>Condition:</label>
     <select name="Product_ConditionStatus" required>
         <option value="New">New</option>
